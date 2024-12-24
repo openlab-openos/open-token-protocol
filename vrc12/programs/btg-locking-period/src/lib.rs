@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
+use open_token;
+use open_token_2022;
 declare_id!("9aBFyjj5mw9RVQZc8AVoENMzMiYLoY4hdZ8PvtDdqoNM");
 
 #[program]
@@ -11,12 +13,16 @@ pub mod btg_locking_period {
             end_time > clock.unix_timestamp,
             ErrorCode::UnlockTimeTooEarly
         );
-        //check mint account 
-        let mint_program_id = ctx.accounts.mint.to_account_info().owner.to_string();
+        //check mint account
+        let mint_program = ctx.accounts.mint.to_account_info().owner;
         require!(
-            mint_program_id == "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-                || mint_program_id == "Token9ADbPtdFC3PjxaohBLGw2pgZwofdcbj6Lyaw6c",
+            mint_program == &open_token::ID
+                || mint_program == &open_token_2022::ID,
             ErrorCode::InvalidMintAccount
+        );
+        require!(
+            ctx.accounts.mint.is_initialized == true,
+            ErrorCode::MintNotInitialized
         );
 
         ctx.accounts.lock_account.amount = amount;
@@ -124,4 +130,6 @@ pub enum ErrorCode {
     Unauthorized,
     #[msg("Invalid mint account")]
     InvalidMintAccount,
+    #[msg("Mint account is not initialized")]
+    MintNotInitialized,
 }
