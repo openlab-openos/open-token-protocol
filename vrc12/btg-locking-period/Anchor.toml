@@ -11,7 +11,7 @@ btg_locking_period = "9aBFyjj5mw9RVQZc8AVoENMzMiYLoY4hdZ8PvtDdqoNM"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "http://api.mainnet.openverse.network:8899"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
