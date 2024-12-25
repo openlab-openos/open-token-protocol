@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
-use open_token;
-use open_token_2022;
-declare_id!("9aBFyjj5mw9RVQZc8AVoENMzMiYLoY4hdZ8PvtDdqoNM");
+use anchor_spl::token_interface::Mint;
+
+declare_id!("99mpy2LmaD747bwWSLs5sNHPuRRPMdd1aR22HeAceqUh");
 
 #[program]
 pub mod btg_locking_period {
@@ -14,12 +14,6 @@ pub mod btg_locking_period {
             ErrorCode::UnlockTimeTooEarly
         );
         //check mint account
-        let mint_program = ctx.accounts.mint.to_account_info().owner;
-        require!(
-            mint_program == &open_token::ID
-                || mint_program == &open_token_2022::ID,
-            ErrorCode::InvalidMintAccount
-        );
         require!(
             ctx.accounts.mint.is_initialized == true,
             ErrorCode::MintNotInitialized
@@ -86,7 +80,7 @@ pub mod btg_locking_period {
 pub struct Lock<'info> {
     #[account(init, payer = owner, space = 8 + 32 + 32 + 8 + 8 + 8 + 1)]
     pub lock_account: Account<'info, LockAccount>,
-    pub mint: Account<'info, Mint>,
+    pub mint: InterfaceAccount<'info, Mint>,
     #[account(mut)]
     pub owner: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -98,16 +92,6 @@ pub struct Unlock<'info> {
     pub lock_account: Account<'info, LockAccount>,
     #[account(mut)]
     pub owner: Signer<'info>,
-    pub system_program: Program<'info, System>,
-}
-
-#[account]
-pub struct Mint {
-    pub mint_authority: Option<Pubkey>,
-    pub supply: u64,
-    pub decimals: u8,
-    pub is_initialized: bool,
-    pub freeze_authority: Option<Pubkey>,
 }
 
 #[account]
