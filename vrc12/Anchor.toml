@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-btg_locking_period = "9aBFyjj5mw9RVQZc8AVoENMzMiYLoY4hdZ8PvtDdqoNM"
+btg_locking_period = "99mpy2LmaD747bwWSLs5sNHPuRRPMdd1aR22HeAceqUh"
 
 [registry]
 url = "https://api.apr.dev"
