@@ -10,9 +10,14 @@ pub mod btg_locking_period {
     pub fn lock(ctx: Context<Lock>, amount: u64, end_time: i64) -> Result<()> {
         let clock = Clock::get()?;
         require!(
-            end_time > clock.unix_timestamp,
+            end_time > clock.unix_timestamp + 86400,
             ErrorCode::UnlockTimeTooEarly
         );
+        require!(
+            end_time < clock.unix_timestamp + 10 * 365 * 86400,
+            ErrorCode::UnlockTimeTooLate
+        );
+
         //check mint account
         require!(
             ctx.accounts.mint.is_initialized == true,
@@ -59,6 +64,12 @@ pub mod btg_locking_period {
             ctx.accounts.lock_account.owner == *ctx.accounts.owner.key,
             ErrorCode::Unauthorized
         );
+
+        require!(
+            ctx.accounts.lock_account.is_unlocked == false,
+            ErrorCode::AccountAlreadyUnlocked,
+        );
+
         ctx.accounts.lock_account.is_unlocked = true;
 
         // Transfer BTG back to the owner
@@ -106,9 +117,9 @@ pub struct LockAccount {
 
 #[error_code]
 pub enum ErrorCode {
-    #[msg("Unlock time is too early.")]
+    #[msg("Unlock time is smaller than 24 hours")]
     UnlockTimeTooEarly,
-    #[msg("Unlock time has not been reached.")]
+    #[msg("Unlock time has not been reached")]
     UnlockTimeNotReached,
     #[msg("Unauthorized access.")]
     Unauthorized,
@@ -116,4 +127,9 @@ pub enum ErrorCode {
     InvalidMintAccount,
     #[msg("Mint account is not initialized")]
     MintNotInitialized,
+    #[msg("Account is already unlocked")]
+    AccountAlreadyUnlocked,
+    #[msg("Unlock time is larger than 10 years")]
+    UnlockTimeTooLate,
+    
 }
