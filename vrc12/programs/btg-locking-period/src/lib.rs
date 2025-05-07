@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 use anchor_spl::token_interface::Mint;
 
-declare_id!("99mpy2LmaD747bwWSLs5sNHPuRRPMdd1aR22HeAceqUh");
+declare_id!("vrccD48wXDoZbj9t6xu7X2362Lr9yyocMB7aq9GVaym");
 
 #[program]
 pub mod btg_locking_period {
