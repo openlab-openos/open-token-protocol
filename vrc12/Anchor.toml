@@ -5,13 +5,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-btg_locking_period = "99mpy2LmaD747bwWSLs5sNHPuRRPMdd1aR22HeAceqUh"
+btg_locking_period = "vrccD48wXDoZbj9t6xu7X2362Lr9yyocMB7aq9GVaym"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "http://api.mainnet.openverse.network:8899"
+cluster = "https://api.mainnet.openverse.network"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

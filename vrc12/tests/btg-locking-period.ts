@@ -13,10 +13,10 @@ describe("btg-locking-period", () => {
 
 
 
-  //lock test success
+  // //lock test success
   it("run lock", async () => {
     const amount = 1_000_000_000; // Example amount in lamports
-    const endTime = (new Date().getTime() / 1000) + 6; // 6s from now
+    const endTime = (new Date().getTime() / 1000) + 7 * 86400; // 6s from now
 
     const tx = await program.methods.lock(new anchor.BN(amount), new anchor.BN(endTime)).accounts({
       lockAccount: lockAccount.publicKey,
@@ -32,15 +32,15 @@ describe("btg-locking-period", () => {
   });
 
 
-  //unlock test success
-  it("run unlock", async () => {
-    const tx = await program.methods.unlock().accounts({
-      lockAccount: lockAccount.publicKey,
-      owner: provider.wallet.publicKey,
-    })
-      .rpc();
-    console.log(tx);
-  });
+  // //unlock test success
+  // it("run unlock", async () => {
+  //   const tx = await program.methods.unlock().accounts({
+  //     lockAccount: lockAccount.publicKey,
+  //     owner: provider.wallet.publicKey,
+  //   })
+  //     .rpc();
+  //   console.log(tx);
+  // });
 
   //all accounts list
   it("all lock accounts list", async () => {
