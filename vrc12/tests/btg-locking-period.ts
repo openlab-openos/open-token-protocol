@@ -2,11 +2,18 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { BtgLockingPeriod } from "../target/types/btg_locking_period";
 
+
+function getRandomInt() {
+  var min = 1000;
+  var max = Math.floor(1000000000);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 describe("btg-locking-period", () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
-  const mint = new anchor.web3.PublicKey("GragM9tHgicpxtf9qrTkbY1fFZYA8CJaDgLuFnZikdqs");
+  const mint = new anchor.web3.PublicKey("APr4JzRPKXhxYZnkxfJMtG8VELiXCGhfV6oMiY3ELCNN");
 
   const program = anchor.workspace.BtgLockingPeriod as Program<BtgLockingPeriod>;
   const lockAccount = anchor.web3.Keypair.generate();
@@ -18,7 +25,7 @@ describe("btg-locking-period", () => {
     const amount = 1_000_000_000; // Example amount in lamports
     const endTime = (new Date().getTime() / 1000) + 7 * 86400; // 6s from now
 
-    const tx = await program.methods.lock(new anchor.BN(amount), new anchor.BN(endTime)).accounts({
+    const tx = await program.methods.lock(new anchor.BN(getRandomInt()),new anchor.BN(amount), new anchor.BN(endTime)).accounts({
       lockAccount: lockAccount.publicKey,
       mint: mint,
       owner: provider.wallet.publicKey,

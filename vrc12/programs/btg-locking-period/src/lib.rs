@@ -7,7 +7,7 @@ declare_id!("vrccD48wXDoZbj9t6xu7X2362Lr9yyocMB7aq9GVaym");
 #[program]
 pub mod btg_locking_period {
     use super::*;
-    pub fn lock(ctx: Context<Lock>, amount: u64, end_time: i64) -> Result<()> {
+    pub fn lock(ctx: Context<Lock>, serial_number:u64, amount: u64, end_time: i64) -> Result<()> {
         let clock = Clock::get()?;
         require!(
             end_time > clock.unix_timestamp + 86400,
@@ -24,12 +24,19 @@ pub mod btg_locking_period {
             ErrorCode::MintNotInitialized
         );
 
+    
+        require!(
+            serial_number > 1000,
+            ErrorCode::SerialNumberTooSmall
+        );
+
         ctx.accounts.lock_account.amount = amount;
         ctx.accounts.lock_account.start_time = clock.unix_timestamp;
         ctx.accounts.lock_account.end_time = end_time;
         ctx.accounts.lock_account.owner = *ctx.accounts.owner.key;
         ctx.accounts.lock_account.is_unlocked = false;
         ctx.accounts.lock_account.mint = ctx.accounts.mint.key();
+        ctx.accounts.lock_account.serial_number = serial_number;
 
         // Transfer BTG to the lock account
         system_program::transfer(
@@ -89,7 +96,7 @@ pub mod btg_locking_period {
 
 #[derive(Accounts)]
 pub struct Lock<'info> {
-    #[account(init, payer = owner, space = 8 + 32 + 32 + 8 + 8 + 8 + 1)]
+    #[account(init, payer = owner, space = 8 + 32 + 32 + 8 + 8 + 8 + 8 + 1)]
     pub lock_account: Account<'info, LockAccount>,
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(mut)]
@@ -110,6 +117,7 @@ pub struct LockAccount {
     pub mint: Pubkey,
     pub owner: Pubkey,
     pub amount: u64,
+    pub serial_number:u64,
     pub start_time: i64,
     pub end_time: i64,
     pub is_unlocked: bool,
@@ -131,5 +139,8 @@ pub enum ErrorCode {
     AccountAlreadyUnlocked,
     #[msg("Unlock time is larger than 10 years")]
     UnlockTimeTooLate,
+    #[msg("SerialNumber is larger than 1000")]
+    SerialNumberTooSmall
+    
     
 }
