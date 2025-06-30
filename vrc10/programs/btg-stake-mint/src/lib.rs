@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::program_option::COption;
 use anchor_lang::system_program;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token_interface::mint_to;
@@ -6,46 +7,56 @@ use anchor_spl::token_interface::Mint;
 use anchor_spl::token_interface::MintTo;
 use anchor_spl::token_interface::TokenAccount;
 use anchor_spl::token_interface::TokenInterface;
-
+use anchor_spl::token_interface::{Burn,burn};
 declare_id!("13LuL7scpzXTa5hCgs7LYpeTfpcdNcU9DkuW1rMqHYQU");
 
 #[program]
-
 pub mod btg_stake_mint {
-
     use super::*;
-
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
         let config = &mut ctx.accounts.config;
-        config.owner = *ctx.accounts.authority.key;
+        config.authority = *ctx.accounts.authority.key;
         config.tokens = Vec::new();
         Ok(())
     }
 
     pub fn add_to_whitelist(
-        ctx: Context<Initialize>,
+        ctx: Context<WhiteList>,
         symbol: String,
-        mint: Pubkey,
         output_rate: u64,
     ) -> Result<()> {
         let config = &mut ctx.accounts.config;
-        require!(config.owner == ctx.accounts.authority.key(), ErrorCode::Unauthorized);
+        require!(
+            config.authority == ctx.accounts.authority.key(),
+            MyErrorCode::Unauthorized
+        );
 
+        let mint = ctx.accounts.mint.key();
+
+        require!(
+            ctx.accounts.mint.mint_authority == COption::Some(config.key()),
+            MyErrorCode::InvalidMintAuthority
+        );
         // 检查是否已存在
         if config.tokens.iter().any(|token| token.mint == mint) {
-            return Err(ErrorCode::TokenAlreadyExists.into());
+            return Err(MyErrorCode::TokenAlreadyExists.into());
         }
+
         config.tokens.push(TokenInfo {
-            symbol: symbol,
-            mint: mint,
-            output_rate: output_rate,
+            symbol,
+            mint,
+            output_rate,
         });
         Ok(())
     }
 
-    pub fn remove_from_whitelist(ctx: Context<Initialize>, mint: Pubkey) -> Result<()> {
+    pub fn remove_from_whitelist(ctx: Context<WhiteList>) -> Result<()> {
         let config = &mut ctx.accounts.config;
-        require!(config.owner == ctx.accounts.authority.key(), ErrorCode::Unauthorized);
+        let mint = ctx.accounts.mint.key();
+        require!(
+            config.authority == ctx.accounts.authority.key(),
+            MyErrorCode::Unauthorized
+        );
 
         if let Some(index) = config.tokens.iter().position(|t| t.mint == mint) {
             config.tokens.remove(index);
@@ -55,24 +66,24 @@ pub mod btg_stake_mint {
 
     pub fn stake_btg(ctx: Context<StakeBtg>, amount: u64) -> Result<()> {
         if amount < 1_000_000 {
-            return Err(ErrorCode::AmountTooSmall.into());
+            return Err(MyErrorCode::AmountTooSmall.into());
         }
         if ctx.accounts.user.lamports() < amount {
-            return Err(ErrorCode::InsufficientFunds.into());
+            return Err(MyErrorCode::InsufficientFunds.into());
         }
         let config = &ctx.accounts.config;
         require!(
             config
                 .tokens
                 .iter()
-                .any(|token| token.mint == ctx.accounts.token_mint.key()),
-            ErrorCode::InvalidToken
+                .any(|token| token.mint == ctx.accounts.mint.key()),
+            MyErrorCode::InvalidToken
         );
 
         let token_info = config
             .tokens
             .iter()
-            .find(|t| t.mint == ctx.accounts.token_mint.key())
+            .find(|t| t.mint == ctx.accounts.mint.key())
             .unwrap();
 
         system_program::transfer(
@@ -88,15 +99,18 @@ pub mod btg_stake_mint {
 
         // 4. 计算铸造数量：amount * output_rate / 1e9 （根据你的精度调整）
         let tokens_to_mint = amount
-            .checked_mul(token_info.output_rate).expect("Math error")
-            .checked_div(1_000_000_000).expect("Math error"); // 假设输出为十亿分之一单位
+            .checked_mul(1).expect("Math error")
+            .checked_mul(token_info.output_rate)
+            .expect("Math error")
+            .checked_div(1_000_000_000)
+            .expect("Math error"); // 假设输出为十亿分之一单位
 
-        let signer_seeds: &[&[&[u8]]] = &[&[b"config"]];
+        let signer_seeds: &[&[&[u8]]] = &[&[b"config", &[ctx.bumps.config]]];
         mint_to(
             CpiContext::new_with_signer(
                 ctx.accounts.token_program.to_account_info(),
                 MintTo {
-                    mint: ctx.accounts.token_mint.to_account_info(),
+                    mint: ctx.accounts.mint.to_account_info(),
                     to: ctx.accounts.user_token_account.to_account_info(),
                     authority: ctx.accounts.config.to_account_info(),
                 },
@@ -108,7 +122,7 @@ pub mod btg_stake_mint {
         // Create stake record
         let staking_vault = &mut ctx.accounts.staking_vault;
         staking_vault.user = *ctx.accounts.user.key;
-        staking_vault.mint = ctx.accounts.token_mint.key();
+        staking_vault.mint = ctx.accounts.mint.key();
         staking_vault.btg_amount = amount;
         staking_vault.price = 1;
         staking_vault.output_rate = token_info.output_rate;
@@ -120,61 +134,43 @@ pub mod btg_stake_mint {
     pub fn redeem_token(ctx: Context<RedeemToken>) -> Result<()> {
         let staking_vault = &ctx.accounts.staking_vault;
 
-        // Check that the token is on the whitelist
-        let config = &ctx.accounts.config;
-
-        // 1. 检查 token_mint 是否在白名单中
-        require!(
-            config
-                .tokens
-                .iter()
-                .any(|token| token.mint == staking_vault.mint),
-            ErrorCode::InvalidToken
-        );
-
         // 2. 验证 staking_vault 中的 btg_amount 不为零
-        require!(staking_vault.btg_amount > 0, ErrorCode::InsufficientFunds);
+        require!(staking_vault.btg_amount > 0, MyErrorCode::InsufficientFunds);
 
         // 3. 验证 stake_record 的用户是否与调用者匹配（可选）
-        require!(staking_vault.user == ctx.accounts.user.key(), ErrorCode::Unauthorized);
+        require!(
+            staking_vault.user == ctx.accounts.user.key(),
+            MyErrorCode::Unauthorized
+        );
 
         // 5. 验证 vault 中的 lamports 是否足够支付赎回的 BTG
         let vault_lamports = ctx.accounts.staking_vault.get_lamports();
         require!(
             vault_lamports >= staking_vault.btg_amount,
-            ErrorCode::InsufficientFunds
+            MyErrorCode::InsufficientFunds
         );
-        let user_key = ctx.accounts.user.key(); // 获取 Pubkey 值
-        let tokne_mint = ctx.accounts.token_mint.key();
 
-        let signer_seeds: &[&[&[u8]]] = &[&[user_key.as_ref(),tokne_mint.as_ref(),&[ctx.bumps.staking_vault]]];
-        system_program::transfer(
-            CpiContext::new_with_signer(
-                ctx.accounts.system_program.to_account_info(),
-                system_program::Transfer {
-                    from: ctx.accounts.staking_vault.to_account_info(),
-                    to: ctx.accounts.user.to_account_info(),
-                },
-                signer_seeds, // 使用 seeds 让 PDA 签名
-            ),
-            vault_lamports,
-        )?;
+        **ctx
+            .accounts
+            .staking_vault
+            .to_account_info()
+            .try_borrow_mut_lamports()? -= vault_lamports;
+        **ctx.accounts.user.try_borrow_mut_lamports()? += vault_lamports;
 
+        let tokne_mint = ctx.accounts.mint.key();
+        require!(tokne_mint == ctx.accounts.staking_vault.mint, MyErrorCode::InvalidToken);
 
-    //     let signer_seeds: &[&[&[u8]]] = &[&[b"token", &[ctx.bumps.sender_token_account]]];
- 
-    // let amount = ctx.accounts.sender_token_account.amount;
-    // let decimals = ctx.accounts.mint.decimals;
- 
-    // let cpi_accounts = TransferChecked {
-    //     mint: ctx.accounts.mint.to_account_info(),
-    //     from: ctx.accounts.sender_token_account.to_account_info(),
-    //     to: ctx.accounts.recipient_token_account.to_account_info(),
-    //     authority: ctx.accounts.sender_token_account.to_account_info(),
-    // };
-    // let cpi_program = ctx.accounts.token_program.to_account_info();
-    // let cpi_context = CpiContext::new(cpi_program, cpi_accounts).with_signer(signer_seeds);
-    // token_interface::transfer_checked(cpi_context, amount, decimals)?;
+        let user_amount = ctx.accounts.user_token_account.amount;
+        require!(user_amount >= staking_vault.output_token_amount, MyErrorCode::InsufficientFunds);
+
+        let cpi_accounts = Burn {
+            mint: ctx.accounts.mint.to_account_info(),
+            from: ctx.accounts.user_token_account.to_account_info(),
+            authority: ctx.accounts.user.to_account_info(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
+        burn(cpi_context, staking_vault.output_token_amount)?;
         Ok(())
     }
 }
@@ -193,13 +189,22 @@ pub struct Initialize<'info> {
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
-
+#[derive(Accounts)]
+pub struct WhiteList<'info> {
+    #[account(
+        seeds = [b"config"],
+        bump,
+    )]
+    pub config: Account<'info, StakeConfig>,
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    #[account(mut)]
+    pub mint: InterfaceAccount<'info, Mint>,
+}
 #[derive(Accounts)]
 pub struct StakeBtg<'info> {
     #[account(
         init,
-        seeds = [user.key().as_ref(), token_mint.key().as_ref()],
-        bump,
         payer = user,
         space = 8 + StakingVault::INIT_SPACE
     )]
@@ -207,14 +212,14 @@ pub struct StakeBtg<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
     #[account(mut)]
-    pub token_mint: InterfaceAccount<'info, Mint>,
+    pub mint: InterfaceAccount<'info, Mint>,
     #[account(seeds = [b"config"],bump)]
     pub config: Account<'info, StakeConfig>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = user,
-        associated_token::mint = token_mint,
+        associated_token::mint = mint,
         associated_token::authority = user,
         associated_token::token_program = token_program
     )]
@@ -227,33 +232,29 @@ pub struct StakeBtg<'info> {
 
 #[derive(Accounts)]
 pub struct RedeemToken<'info> {
-    #[account(
-        mut,
-        seeds = [user.key().as_ref(), token_mint.key().as_ref()],
-        bump,
-        close = user
-    )]
+    #[account(mut)]
     pub staking_vault: Account<'info, StakingVault>,
-    #[account(seeds = [b"config"],bump)]
-    pub config: Account<'info, StakeConfig>,
     #[account(mut)]
     pub user: Signer<'info>,
-    #[account()]
-    pub token_mint: InterfaceAccount<'info, Mint>,
+    pub mint: InterfaceAccount<'info, Mint>,
+    #[account(
+        associated_token::mint = mint,
+        associated_token::authority = user,
+        associated_token::token_program = token_program
+    )]
     pub user_token_account: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
-    pub system_program: Program<'info, System>,
 }
 
 #[account]
 #[derive(InitSpace, Debug)]
 pub struct StakeConfig {
-    pub owner: Pubkey,
+    pub authority: Pubkey,
     #[max_len(100)]
     pub tokens: Vec<TokenInfo>,
 }
 
-#[derive(InitSpace,Clone, Debug,AnchorDeserialize,AnchorSerialize)]
+#[derive(InitSpace, Clone, Debug, AnchorDeserialize, AnchorSerialize)]
 pub struct TokenInfo {
     #[max_len(10)] // 添加max_len属性以满足程序宏的要求
     pub symbol: String,
@@ -274,7 +275,7 @@ pub struct StakingVault {
 
 // Custom errors
 #[error_code]
-pub enum ErrorCode {
+pub enum MyErrorCode {
     #[msg("Unauthorized")]
     Unauthorized,
     #[msg("Invalid token - not in whitelist")]
@@ -287,4 +288,6 @@ pub enum ErrorCode {
     AmountTooSmall,
     #[msg("The user does not have enough funds.")]
     InsufficientFunds,
+    #[msg("The mint authority is not controlled by the program.")]
+    InvalidMintAuthority,
 }
