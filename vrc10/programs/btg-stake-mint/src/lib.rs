@@ -7,7 +7,7 @@ use anchor_spl::token_interface::Mint;
 use anchor_spl::token_interface::MintTo;
 use anchor_spl::token_interface::TokenAccount;
 use anchor_spl::token_interface::TokenInterface;
-use anchor_spl::token_interface::{Burn,burn};
+use anchor_spl::token_interface::{burn, Burn};
 declare_id!("13LuL7scpzXTa5hCgs7LYpeTfpcdNcU9DkuW1rMqHYQU");
 
 #[program]
@@ -23,7 +23,7 @@ pub mod btg_stake_mint {
     pub fn add_to_whitelist(
         ctx: Context<WhiteList>,
         symbol: String,
-        output_rate: u64,
+        output_rate: f64,
     ) -> Result<()> {
         let config = &mut ctx.accounts.config;
         require!(
@@ -98,12 +98,17 @@ pub mod btg_stake_mint {
         )?;
 
         // 4. 计算铸造数量：amount * output_rate / 1e9 （根据你的精度调整）
+        let price = (1.0 * 1e9) as u64;
+        let output_rate_fixed = (token_info.output_rate * 1e9) as u64; // 放大 1e9 倍
         let tokens_to_mint = amount
-            .checked_mul(1).expect("Math error")
-            .checked_mul(token_info.output_rate)
+            .checked_mul(price)
             .expect("Math error")
-            .checked_div(1_000_000_000)
-            .expect("Math error"); // 假设输出为十亿分之一单位
+            .checked_div(1_000_000_000) // 缩小回整数单位
+            .expect("Math error")
+            .checked_mul(output_rate_fixed)
+            .expect("Math error")
+            .checked_div(1_000_000_000) // 缩小回整数单位
+            .expect("Math error");
 
         let signer_seeds: &[&[&[u8]]] = &[&[b"config", &[ctx.bumps.config]]];
         mint_to(
@@ -124,7 +129,7 @@ pub mod btg_stake_mint {
         staking_vault.user = *ctx.accounts.user.key;
         staking_vault.mint = ctx.accounts.mint.key();
         staking_vault.btg_amount = amount;
-        staking_vault.price = 1;
+        staking_vault.price = 1.0;
         staking_vault.output_rate = token_info.output_rate;
         staking_vault.output_token_amount = tokens_to_mint;
         staking_vault.time = Clock::get()?.unix_timestamp;
@@ -157,11 +162,17 @@ pub mod btg_stake_mint {
             .try_borrow_mut_lamports()? -= vault_lamports;
         **ctx.accounts.user.try_borrow_mut_lamports()? += vault_lamports;
 
-        let tokne_mint = ctx.accounts.mint.key();
-        require!(tokne_mint == ctx.accounts.staking_vault.mint, MyErrorCode::InvalidToken);
+        let token_mint = ctx.accounts.mint.key();
+        require!(
+            token_mint == ctx.accounts.staking_vault.mint,
+            MyErrorCode::InvalidToken
+        );
 
         let user_amount = ctx.accounts.user_token_account.amount;
-        require!(user_amount >= staking_vault.output_token_amount, MyErrorCode::InsufficientFunds);
+        require!(
+            user_amount >= staking_vault.output_token_amount,
+            MyErrorCode::InsufficientFunds
+        );
 
         let cpi_accounts = Burn {
             mint: ctx.accounts.mint.to_account_info(),
@@ -171,6 +182,9 @@ pub mod btg_stake_mint {
         let cpi_program = ctx.accounts.token_program.to_account_info();
         let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
         burn(cpi_context, staking_vault.output_token_amount)?;
+
+        let staking_vault = &mut ctx.accounts.staking_vault;
+        staking_vault.btg_amount = 0;
         Ok(())
     }
 }
@@ -236,8 +250,10 @@ pub struct RedeemToken<'info> {
     pub staking_vault: Account<'info, StakingVault>,
     #[account(mut)]
     pub user: Signer<'info>,
+    #[account(mut)]
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(
+        mut,
         associated_token::mint = mint,
         associated_token::authority = user,
         associated_token::token_program = token_program
@@ -259,7 +275,7 @@ pub struct TokenInfo {
     #[max_len(10)] // 添加max_len属性以满足程序宏的要求
     pub symbol: String,
     pub mint: Pubkey,
-    pub output_rate: u64,
+    pub output_rate: f64,
 }
 #[account]
 #[derive(InitSpace)]
@@ -267,8 +283,8 @@ pub struct StakingVault {
     pub user: Pubkey,
     pub btg_amount: u64,
     pub mint: Pubkey,
-    pub price: u64,
-    pub output_rate: u64,
+    pub price: f64,
+    pub output_rate: f64,
     pub output_token_amount: u64,
     pub time: i64,
 }
