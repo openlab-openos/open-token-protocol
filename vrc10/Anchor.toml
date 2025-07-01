@@ -1,17 +1,17 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.localnet]
-btg_stake_mint = "13LuL7scpzXTa5hCgs7LYpeTfpcdNcU9DkuW1rMqHYQU"
+btg_stake_mint = "5coG54L1y31fEfYBaXQZFoF4krGWS47BcZZNsWZGWX2k"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "https://api.mainnet.openverse.network"
+cluster = "http://api.mainnet.openverse.network:8899"
 wallet = "/home/ubuntu/.config/solana/id.json"
 
 [scripts]

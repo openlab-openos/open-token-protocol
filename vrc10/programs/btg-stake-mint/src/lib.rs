@@ -8,7 +8,7 @@ use anchor_spl::token_interface::MintTo;
 use anchor_spl::token_interface::TokenAccount;
 use anchor_spl::token_interface::TokenInterface;
 use anchor_spl::token_interface::{burn, Burn};
-declare_id!("13LuL7scpzXTa5hCgs7LYpeTfpcdNcU9DkuW1rMqHYQU");
+declare_id!("5coG54L1y31fEfYBaXQZFoF4krGWS47BcZZNsWZGWX2k");
 
 #[program]
 pub mod btg_stake_mint {
@@ -263,14 +263,14 @@ pub struct RedeemToken<'info> {
 }
 
 #[account]
-#[derive(InitSpace, Debug)]
+#[derive(InitSpace)]
 pub struct StakeConfig {
     pub authority: Pubkey,
     #[max_len(100)]
     pub tokens: Vec<TokenInfo>,
 }
 
-#[derive(InitSpace, Clone, Debug, AnchorDeserialize, AnchorSerialize)]
+#[derive(InitSpace, Clone, AnchorDeserialize, AnchorSerialize)]
 pub struct TokenInfo {
     #[max_len(10)] // 添加max_len属性以满足程序宏的要求
     pub symbol: String,
