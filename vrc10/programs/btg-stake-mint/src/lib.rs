@@ -8,7 +8,8 @@ use anchor_spl::token_interface::MintTo;
 use anchor_spl::token_interface::TokenAccount;
 use anchor_spl::token_interface::TokenInterface;
 use anchor_spl::token_interface::{burn, Burn};
-declare_id!("5coG54L1y31fEfYBaXQZFoF4krGWS47BcZZNsWZGWX2k");
+
+declare_id!("CmW1X4qWBKTTYwCPPZymzCkcgLJtS5miKyhVgAxWVmKD");
 
 #[program]
 pub mod btg_stake_mint {
@@ -155,25 +156,20 @@ pub mod btg_stake_mint {
             MyErrorCode::InsufficientFunds
         );
 
-        **ctx
-            .accounts
-            .staking_vault
-            .to_account_info()
-            .try_borrow_mut_lamports()? -= vault_lamports;
-        **ctx.accounts.user.try_borrow_mut_lamports()? += vault_lamports;
-
         let token_mint = ctx.accounts.mint.key();
         require!(
             token_mint == ctx.accounts.staking_vault.mint,
             MyErrorCode::InvalidToken
         );
 
-        let user_amount = ctx.accounts.user_token_account.amount;
+        let user_token_account = &ctx.accounts.user_token_account;
+        let tokens_to_burn = staking_vault.output_token_amount;
         require!(
-            user_amount >= staking_vault.output_token_amount,
+            user_token_account.amount >= tokens_to_burn,
             MyErrorCode::InsufficientFunds
         );
 
+        // 销毁用户的代币
         let cpi_accounts = Burn {
             mint: ctx.accounts.mint.to_account_info(),
             from: ctx.accounts.user_token_account.to_account_info(),
@@ -181,10 +177,7 @@ pub mod btg_stake_mint {
         };
         let cpi_program = ctx.accounts.token_program.to_account_info();
         let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
-        burn(cpi_context, staking_vault.output_token_amount)?;
-
-        let staking_vault = &mut ctx.accounts.staking_vault;
-        staking_vault.btg_amount = 0;
+        burn(cpi_context, tokens_to_burn)?;
         Ok(())
     }
 }
@@ -206,13 +199,14 @@ pub struct Initialize<'info> {
 #[derive(Accounts)]
 pub struct WhiteList<'info> {
     #[account(
+        mut,
         seeds = [b"config"],
         bump,
     )]
     pub config: Account<'info, StakeConfig>,
     #[account(mut)]
     pub authority: Signer<'info>,
-    #[account(mut)]
+    #[account()]
     pub mint: InterfaceAccount<'info, Mint>,
 }
 #[derive(Accounts)]
@@ -246,7 +240,7 @@ pub struct StakeBtg<'info> {
 
 #[derive(Accounts)]
 pub struct RedeemToken<'info> {
-    #[account(mut)]
+    #[account(mut , close = user)]
     pub staking_vault: Account<'info, StakingVault>,
     #[account(mut)]
     pub user: Signer<'info>,

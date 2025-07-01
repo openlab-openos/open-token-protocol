@@ -39,15 +39,15 @@ describe("btg-locking-period", () => {
   });
 
 
-  // //unlock test success
-  // it("run unlock", async () => {
-  //   const tx = await program.methods.unlock().accounts({
-  //     lockAccount: lockAccount.publicKey,
-  //     owner: provider.wallet.publicKey,
-  //   })
-  //     .rpc();
-  //   console.log(tx);
-  // });
+  //unlock test success
+  it("run unlock", async () => {
+    const tx = await program.methods.unlock().accounts({
+      lockAccount: lockAccount.publicKey,
+      owner: provider.wallet.publicKey,
+    })
+      .rpc();
+    console.log(tx);
+  });
 
   //all accounts list
   it("all lock accounts list", async () => {

@@ -5,7 +5,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-btg_stake_mint = "5coG54L1y31fEfYBaXQZFoF4krGWS47BcZZNsWZGWX2k"
+btg_stake_mint = "CmW1X4qWBKTTYwCPPZymzCkcgLJtS5miKyhVgAxWVmKD"
 
 [registry]
 url = "https://api.apr.dev"
