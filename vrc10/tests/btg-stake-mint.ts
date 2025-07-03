@@ -1,7 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { BtgStakeMint } from "../target/types/btg_stake_mint";
-import { TOKEN_2022_PROGRAM_ID } from "open-token-web3";
+import { TOKEN_2022_PROGRAM_ID} from "open-token-web3";
 
 describe("btg-stake-mint", () => {
   // Configure the client to use the local cluster.

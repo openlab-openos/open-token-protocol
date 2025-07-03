@@ -8,6 +8,7 @@ use anchor_spl::token_interface::MintTo;
 use anchor_spl::token_interface::TokenAccount;
 use anchor_spl::token_interface::TokenInterface;
 use anchor_spl::token_interface::{burn, Burn};
+use openverse_oracle;
 
 declare_id!("CmW1X4qWBKTTYwCPPZymzCkcgLJtS5miKyhVgAxWVmKD");
 
@@ -42,6 +43,14 @@ pub mod btg_stake_mint {
         if config.tokens.iter().any(|token| token.mint == mint) {
             return Err(MyErrorCode::TokenAlreadyExists.into());
         }
+
+
+        let cpi_accounts = openverse_oracle::cpi::accounts::GetPrice {
+            oracle_account: ctx.accounts.oracle_account.to_account_info()
+        };
+
+        let cpi_ctx = CpiContext::new(ctx.accounts.oracle_program.to_account_info(), cpi_accounts);
+        openverse_oracle::cpi::get_price(cpi_ctx, 0, symbol.clone())?;
 
         config.tokens.push(TokenInfo {
             symbol,
@@ -206,8 +215,14 @@ pub struct WhiteList<'info> {
     pub config: Account<'info, StakeConfig>,
     #[account(mut)]
     pub authority: Signer<'info>,
-    #[account()]
     pub mint: InterfaceAccount<'info, Mint>,
+    #[account(
+        seeds = [b"oracle_account"],
+        bump,
+        seeds::program = oracle_program.key(),
+    )]
+    pub oracle_account: Account<'info,openverse_oracle::OracleAccount>,
+    pub oracle_program: Program<'info, openverse_oracle::program::OpenverseOracle>,
 }
 #[derive(Accounts)]
 pub struct StakeBtg<'info> {
@@ -223,7 +238,13 @@ pub struct StakeBtg<'info> {
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(seeds = [b"config"],bump)]
     pub config: Account<'info, StakeConfig>,
-
+     #[account(
+        seeds = [b"oracle_account"],
+        bump,
+        seeds::program = oracle_program.key(),
+    )]
+    pub oracle_account: Account<'info,openverse_oracle::OracleAccount>,
+    pub oracle_program: Program<'info, openverse_oracle::program::OpenverseOracle>,
     #[account(
         init_if_needed,
         payer = user,
@@ -236,6 +257,7 @@ pub struct StakeBtg<'info> {
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
+    
 }
 
 #[derive(Accounts)]
