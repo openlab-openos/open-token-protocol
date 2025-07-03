@@ -9,6 +9,7 @@ use anchor_spl::token_interface::TokenAccount;
 use anchor_spl::token_interface::TokenInterface;
 use anchor_spl::token_interface::{burn, Burn};
 use openverse_oracle;
+use openverse_oracle::program::OpenverseOracle;
 
 declare_id!("CmW1X4qWBKTTYwCPPZymzCkcgLJtS5miKyhVgAxWVmKD");
 
@@ -222,7 +223,7 @@ pub struct WhiteList<'info> {
         seeds::program = oracle_program.key(),
     )]
     pub oracle_account: Account<'info,openverse_oracle::OracleAccount>,
-    pub oracle_program: Program<'info, openverse_oracle::program::OpenverseOracle>,
+    pub oracle_program: Program<'info, OpenverseOracle>,
 }
 #[derive(Accounts)]
 pub struct StakeBtg<'info> {
@@ -238,7 +239,7 @@ pub struct StakeBtg<'info> {
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(seeds = [b"config"],bump)]
     pub config: Account<'info, StakeConfig>,
-     #[account(
+    #[account(
         seeds = [b"oracle_account"],
         bump,
         seeds::program = oracle_program.key(),
