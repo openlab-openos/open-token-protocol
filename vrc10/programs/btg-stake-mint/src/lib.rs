@@ -75,6 +75,31 @@ pub mod btg_stake_mint {
         Ok(())
     }
 
+    pub fn mint_to_owner(ctx: Context<MintToOwner>, amount: u64) -> Result<()>{
+        let config = &ctx.accounts.config;
+        require!(
+            config.authority == ctx.accounts.authority.key(),
+            MyErrorCode::Unauthorized
+        );
+        if !config.tokens.iter().any(|token| token.mint == ctx.accounts.mint.key()) {
+            return Err(MyErrorCode::InvalidToken.into());
+        }
+        let signer_seeds: &[&[&[u8]]] = &[&[b"config", &[ctx.bumps.config]]];
+        mint_to(
+            CpiContext::new_with_signer(
+                ctx.accounts.token_program.to_account_info(),
+                MintTo {
+                    mint: ctx.accounts.mint.to_account_info(),
+                    to: ctx.accounts.user_token_account.to_account_info(),
+                    authority: ctx.accounts.config.to_account_info(),
+                },
+                signer_seeds,
+            ),
+            amount,
+        )?;
+        Ok(())
+    }
+
     pub fn stake_btg(ctx: Context<StakeBtg>, amount: u64) -> Result<()> {
         if amount < 1_000_000 {
             return Err(MyErrorCode::AmountTooSmall.into());
@@ -97,6 +122,20 @@ pub mod btg_stake_mint {
             .find(|t| t.mint == ctx.accounts.mint.key())
             .unwrap();
 
+
+
+        let cpi_accounts = openverse_oracle::cpi::accounts::GetPrice {
+            oracle_account: ctx.accounts.oracle_account.to_account_info()
+        };
+        let cpi_ctx = CpiContext::new(ctx.accounts.oracle_program.to_account_info(), cpi_accounts);
+        let btg_price = openverse_oracle::cpi::get_price(cpi_ctx, 1, "BTG".to_string())?.get();
+
+        let cpi_accounts = openverse_oracle::cpi::accounts::GetPrice {
+            oracle_account: ctx.accounts.oracle_account.to_account_info()
+        };
+        let cpi_ctx = CpiContext::new(ctx.accounts.oracle_program.to_account_info(), cpi_accounts);
+        let token_price = openverse_oracle::cpi::get_price(cpi_ctx, 0, token_info.symbol.clone())?.get();
+        
         system_program::transfer(
             CpiContext::new(
                 ctx.accounts.system_program.to_account_info(),
@@ -109,17 +148,10 @@ pub mod btg_stake_mint {
         )?;
 
         // 4. 计算铸造数量：amount * output_rate / 1e9 （根据你的精度调整）
-        let price = (1.0 * 1e9) as u64;
-        let output_rate_fixed = (token_info.output_rate * 1e9) as u64; // 放大 1e9 倍
-        let tokens_to_mint = amount
-            .checked_mul(price)
-            .expect("Math error")
-            .checked_div(1_000_000_000) // 缩小回整数单位
-            .expect("Math error")
-            .checked_mul(output_rate_fixed)
-            .expect("Math error")
-            .checked_div(1_000_000_000) // 缩小回整数单位
-            .expect("Math error");
+        let rate = btg_price / token_price ;
+        let output_rate_fixed = token_info.output_rate; // 放大 1e9 倍
+        let tokens_to_mint = (amount as f64 * rate * output_rate_fixed).trunc() as u64;
+           
 
         let signer_seeds: &[&[&[u8]]] = &[&[b"config", &[ctx.bumps.config]]];
         mint_to(
@@ -140,7 +172,8 @@ pub mod btg_stake_mint {
         staking_vault.user = *ctx.accounts.user.key;
         staking_vault.mint = ctx.accounts.mint.key();
         staking_vault.btg_amount = amount;
-        staking_vault.price = 1.0;
+        staking_vault.btg_price = btg_price;
+        staking_vault.token_price = token_price;
         staking_vault.output_rate = token_info.output_rate;
         staking_vault.output_token_amount = tokens_to_mint;
         staking_vault.time = Clock::get()?.unix_timestamp;
@@ -225,6 +258,32 @@ pub struct WhiteList<'info> {
     pub oracle_account: Account<'info,openverse_oracle::OracleAccount>,
     pub oracle_program: Program<'info, OpenverseOracle>,
 }
+
+
+
+#[derive(Accounts)]
+pub struct MintToOwner<'info> {
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    #[account(mut)]
+    pub mint: InterfaceAccount<'info, Mint>,
+    #[account(seeds = [b"config"],bump)]
+    pub config: Account<'info, StakeConfig>,
+    #[account(
+        init_if_needed,
+        payer = authority,
+        associated_token::mint = mint,
+        associated_token::authority = authority,
+        associated_token::token_program = token_program
+    )]
+    pub user_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub token_program: Interface<'info, TokenInterface>,
+    pub system_program: Program<'info, System>,
+    pub rent: Sysvar<'info, Rent>,
+}
+
+
 #[derive(Accounts)]
 pub struct StakeBtg<'info> {
     #[account(
@@ -245,7 +304,7 @@ pub struct StakeBtg<'info> {
         seeds::program = oracle_program.key(),
     )]
     pub oracle_account: Account<'info,openverse_oracle::OracleAccount>,
-    pub oracle_program: Program<'info, openverse_oracle::program::OpenverseOracle>,
+    pub oracle_program: Program<'info, OpenverseOracle>,
     #[account(
         init_if_needed,
         payer = user,
@@ -300,7 +359,8 @@ pub struct StakingVault {
     pub user: Pubkey,
     pub btg_amount: u64,
     pub mint: Pubkey,
-    pub price: f64,
+    pub token_price:f64,
+    pub btg_price: f64,
     pub output_rate: f64,
     pub output_token_amount: u64,
     pub time: i64,
