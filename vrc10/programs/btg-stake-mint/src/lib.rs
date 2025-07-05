@@ -11,7 +11,7 @@ use anchor_spl::token_interface::{burn, Burn};
 use openverse_oracle;
 use openverse_oracle::program::OpenverseOracle;
 
-declare_id!("CmW1X4qWBKTTYwCPPZymzCkcgLJtS5miKyhVgAxWVmKD");
+declare_id!("vrca8nDGAZW9R23jAerRJUqsd7vz1q3sqkKMxQsisxk");
 
 #[program]
 pub mod btg_stake_mint {
