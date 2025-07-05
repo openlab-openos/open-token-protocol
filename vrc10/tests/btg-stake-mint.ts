@@ -12,21 +12,16 @@ describe("btg-stake-mint", () => {
     [Buffer.from("config")],
     program.programId
     );
-   var mint:anchor.web3.PublicKey;
+    console.log("configPda:", configPda.toBase58());
+  //  var mint:anchor.web3.PublicKey;
 
-   before(async function() {
-    console.log("Running once before all tests...");
+  const mint  = new anchor.web3.PublicKey("JPYXor5J57cvE5wMYS2ZsNuvH1g7sW2XxseBHr8Ak4u")
+
+   it("Support Tokens", async function(){
     this.timeout(10000);
-    // 可以做一些全局初始化操作，如部署合约、初始化配置等
     const accountData = await program.account.stakeConfig.fetch(configPda);
-    mint = accountData.tokens[0].mint;
+    console.log("Tokens:", accountData.tokens);
   });
-
-  //  it("Support Tokens", async function(){
-  //   this.timeout(10000);
-  //   const accountData = await program.account.stakeConfig.fetch(configPda);
-  //   console.log("Tokens:", accountData.tokens);
-  // });
 
   // it("Is initialized!", async function(){
   //   this.timeout(100000);
@@ -39,7 +34,7 @@ describe("btg-stake-mint", () => {
 
   // it("Add to whitelist", async function() {
   //   this.timeout(100000);
-  //   const tx = await program.methods.addToWhitelist("CNY", 0.1)
+  //   const tx = await program.methods.addToWhitelist("JPY", 0.1467)
   //   .accounts({ authority:provider.wallet.publicKey, mint:mint}).rpc();
   //   console.log("Add to whitelist tx:", tx);
    

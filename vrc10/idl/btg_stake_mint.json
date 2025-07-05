@@ -1,5 +1,5 @@
 {
-  "address": "CmW1X4qWBKTTYwCPPZymzCkcgLJtS5miKyhVgAxWVmKD",
+  "address": "vrca8nDGAZW9R23jAerRJUqsd7vz1q3sqkKMxQsisxk",
   "metadata": {
     "name": "btg_stake_mint",
     "version": "0.1.0",
@@ -46,6 +46,40 @@
         },
         {
           "name": "mint"
+        },
+        {
+          "name": "oracle_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  114,
+                  97,
+                  99,
+                  108,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "oracle_program"
+            }
+          }
+        },
+        {
+          "name": "oracle_program",
+          "address": "oracynDbHWzsfV7GaQveWhqrAsB1LNq6pr4ftRYME4c"
         }
       ],
       "args": [
@@ -102,6 +136,126 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "mint_to_owner",
+      "discriminator": [
+        152,
+        88,
+        83,
+        7,
+        21,
+        123,
+        129,
+        108
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                146,
+                254,
+                170,
+                189,
+                14,
+                251,
+                208,
+                173,
+                193,
+                77,
+                189,
+                183,
+                143,
+                165,
+                133,
+                83,
+                112,
+                168,
+                140,
+                159,
+                214,
+                120,
+                107,
+                2,
+                254,
+                70,
+                202,
+                55,
+                107,
+                110,
+                241,
+                192
+              ]
+            }
+          }
+        },
+        {
+          "name": "associated_token_program",
+          "address": "AtokenhZ6AE34VMYRv1AqSv8q8QZJxxEaY1zKiXKwSWT"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "redeem_token",
@@ -231,6 +385,40 @@
         },
         {
           "name": "mint"
+        },
+        {
+          "name": "oracle_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  114,
+                  97,
+                  99,
+                  108,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "oracle_program"
+            }
+          }
+        },
+        {
+          "name": "oracle_program",
+          "address": "oracynDbHWzsfV7GaQveWhqrAsB1LNq6pr4ftRYME4c"
         }
       ],
       "args": []
@@ -279,6 +467,40 @@
               }
             ]
           }
+        },
+        {
+          "name": "oracle_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  114,
+                  97,
+                  99,
+                  108,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "oracle_program"
+            }
+          }
+        },
+        {
+          "name": "oracle_program",
+          "address": "oracynDbHWzsfV7GaQveWhqrAsB1LNq6pr4ftRYME4c"
         },
         {
           "name": "user_token_account",
@@ -363,6 +585,19 @@
   ],
   "accounts": [
     {
+      "name": "OracleAccount",
+      "discriminator": [
+        189,
+        23,
+        49,
+        197,
+        79,
+        96,
+        245,
+        91
+      ]
+    },
+    {
       "name": "StakeConfig",
       "discriminator": [
         238,
@@ -428,6 +663,62 @@
   ],
   "types": [
     {
+      "name": "OracleAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "prices",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "PriceEntry"
+                }
+              }
+            }
+          },
+          {
+            "name": "price_authorities",
+            "type": {
+              "vec": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceEntry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "source",
+            "type": "string"
+          },
+          {
+            "name": "currency_type",
+            "type": "u8"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "type": "f64"
+          },
+          {
+            "name": "updated_at",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
       "name": "StakeConfig",
       "type": {
         "kind": "struct",
@@ -467,7 +758,11 @@
             "type": "pubkey"
           },
           {
-            "name": "price",
+            "name": "token_price",
+            "type": "f64"
+          },
+          {
+            "name": "btg_price",
             "type": "f64"
           },
           {
