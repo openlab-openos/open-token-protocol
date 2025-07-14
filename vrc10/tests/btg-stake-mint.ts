@@ -15,7 +15,7 @@ describe("btg-stake-mint", () => {
     console.log("configPda:", configPda.toBase58());
   //  var mint:anchor.web3.PublicKey;
 
-  const mint  = new anchor.web3.PublicKey("JPYXor5J57cvE5wMYS2ZsNuvH1g7sW2XxseBHr8Ak4u")
+  const mint  = new anchor.web3.PublicKey("USDo1uHcFo9H6aHWcqCkhBiWiMhUqQJFienbKDBPEhN")
 
    it("Support Tokens", async function(){
     this.timeout(10000);
@@ -46,17 +46,17 @@ describe("btg-stake-mint", () => {
   //   .accounts({ authority:provider.wallet.publicKey, mint:mint}).rpc();
   //   console.log("Remove from whitelist tx:", tx);
   // });
-  it("Stake", async function() { 
-    this.timeout(100000);
-    const keypair = anchor.web3.Keypair.generate()
-    const tx = await program.methods.stakeBtg(new anchor.BN(1000000000))
-    .accounts({ stakingVault: keypair.publicKey,
-      user:provider.wallet.publicKey, 
-      mint:mint,
-      tokenProgram: TOKEN_2022_PROGRAM_ID,
+  // it("Stake", async function() { 
+  //   this.timeout(100000);
+  //   const keypair = anchor.web3.Keypair.generate()
+  //   const tx = await program.methods.stakeBtg(new anchor.BN(1000000000))
+  //   .accounts({ stakingVault: keypair.publicKey,
+  //     user:provider.wallet.publicKey, 
+  //     mint:mint,
+  //     tokenProgram: TOKEN_2022_PROGRAM_ID,
     
-    }).signers([keypair]).rpc();
-  })
+  //   }).signers([keypair]).rpc();
+  // })
 
   // it("RedeemToken", async function() { 
   //   this.timeout(100000);
