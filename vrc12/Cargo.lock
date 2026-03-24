@@ -56,6 +56,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e89da841a80418a9b391ebaea17f5c112ffaaa96f621d2c285b5174da76b9011"
 dependencies = [
  "cfg-if",
+ "getrandom 0.2.15",
  "once_cell",
  "version_check",
  "zerocopy",
@@ -73,7 +74,7 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-access-control"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-syn",
  "proc-macro2",
@@ -84,7 +85,7 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-account"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-syn",
  "bs58 0.5.1",
@@ -96,7 +97,7 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-constant"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-syn",
  "quote",
@@ -106,7 +107,7 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-error"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-syn",
  "quote",
@@ -116,7 +117,7 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-event"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-syn",
  "proc-macro2",
@@ -127,7 +128,7 @@ dependencies = [
 [[package]]
 name = "anchor-attribute-program"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-lang-idl",
  "anchor-syn",
@@ -143,7 +144,7 @@ dependencies = [
 [[package]]
 name = "anchor-derive-accounts"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-syn",
  "quote",
@@ -153,10 +154,10 @@ dependencies = [
 [[package]]
 name = "anchor-derive-serde"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-syn",
- "borsh-derive-internal 0.9.3",
+ "borsh-derive-internal 0.10.4",
  "proc-macro2",
  "quote",
  "syn 1.0.109",
@@ -165,7 +166,7 @@ dependencies = [
 [[package]]
 name = "anchor-derive-space"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -175,7 +176,7 @@ dependencies = [
 [[package]]
 name = "anchor-lang"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-attribute-access-control",
  "anchor-attribute-account",
@@ -190,7 +191,7 @@ dependencies = [
  "arrayref",
  "base64 0.21.7",
  "bincode",
- "borsh 0.9.3",
+ "borsh 0.10.4",
  "bytemuck",
  "getrandom 0.2.15",
  "solana-program",
@@ -200,7 +201,7 @@ dependencies = [
 [[package]]
 name = "anchor-lang-idl"
 version = "0.1.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-lang-idl-spec",
  "anyhow",
@@ -214,7 +215,7 @@ dependencies = [
 [[package]]
 name = "anchor-lang-idl-spec"
 version = "0.1.0"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anyhow",
  "serde",
@@ -223,7 +224,7 @@ dependencies = [
 [[package]]
 name = "anchor-spl"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anchor-lang",
  "spl-associated-token-account",
@@ -237,7 +238,7 @@ dependencies = [
 [[package]]
 name = "anchor-syn"
 version = "0.30.1"
-source = "git+https://github.com/openlab-openos/anchor.git#a946cf516a52637dfbe013e200c2bd8705f105aa"
+source = "git+https://github.com/openlab-openos/anchor.git#e9a7c435d8b46a5eba8f5037f5c289ba11fdb2b8"
 dependencies = [
  "anyhow",
  "bs58 0.5.1",
@@ -509,16 +510,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "borsh"
-version = "1.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2506947f73ad44e344215ccd6403ac2ae18cd8e046e581a441bf8d199f257f03"
-dependencies = [
- "borsh-derive 1.5.3",
- "cfg_aliases",
-]
-
-[[package]]
 name = "borsh-derive"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -542,19 +533,6 @@ dependencies = [
  "proc-macro-crate 0.1.5",
  "proc-macro2",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "borsh-derive"
-version = "1.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2593a3b8b938bd68373196c9832f516be11fa487ef4ae745eb282e6a56a7244"
-dependencies = [
- "once_cell",
- "proc-macro-crate 3.2.0",
- "proc-macro2",
- "quote",
- "syn 2.0.91",
 ]
 
 [[package]]
@@ -692,12 +670,6 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
-
-[[package]]
-name = "cfg_aliases"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 
 [[package]]
 name = "chrono"
@@ -1296,6 +1268,17 @@ dependencies = [
 
 [[package]]
 name = "num-derive"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "876a53fff98e03a936a674b29568b0e605f06b29372c2489ff4de23f1949743d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "num-derive"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed3955f1a9c7c0c15e092f9c887db08b1fc683305fdf6eb6684f22555355e202"
@@ -1325,20 +1308,20 @@ dependencies = [
 
 [[package]]
 name = "num_enum"
-version = "0.7.3"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e613fc340b2220f734a8595782c551f1250e969d87d3be1ae0579e8d4065179"
+checksum = "7a015b430d3c108a207fd776d2e2196aaf8b1cf8cf93253e3a097ff3085076a1"
 dependencies = [
  "num_enum_derive",
 ]
 
 [[package]]
 name = "num_enum_derive"
-version = "0.7.3"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af1844ef2428cc3e1cb900be36181049ef3d3193c63e43026cfe202983b27a56"
+checksum = "96667db765a921f7b295ffee8b60472b686a51d4f21c2ee4ffdb94c7013b65a6"
 dependencies = [
- "proc-macro-crate 3.2.0",
+ "proc-macro-crate 1.3.1",
  "proc-macro2",
  "quote",
  "syn 2.0.91",
@@ -1441,18 +1424,19 @@ dependencies = [
 
 [[package]]
 name = "proc-macro-crate"
-version = "3.2.0"
+version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ecf48c7ca261d60b74ab1a7b20da18bede46776b2e55535cb958eb595c5fa7b"
+checksum = "7f4c021e1093a56626774e81216a4ce732a735e5bad4868a03f3ed65ca0c3919"
 dependencies = [
- "toml_edit",
+ "once_cell",
+ "toml_edit 0.19.15",
 ]
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.92"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37d3544b3f2748c54e147655edb5025752e2303145b5aefb3c3ea2c78b973bb0"
+checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
 dependencies = [
  "unicode-ident",
 ]
@@ -1794,12 +1778,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "74233d3b3b2f6d4b006dc19dee745e73e2a6bfb6f93607cd3b02bd5b00797d7c"
 
 [[package]]
-name = "siphasher"
-version = "0.3.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38b58827f4464d87d377d175e90bf58eb00fd8716ff0a62f80356b5e61555d0d"
-
-[[package]]
 name = "sized-chunks"
 version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1817,13 +1795,16 @@ checksum = "3c5e1a9a646d36c3599cd173a41282daf47c44583ad367b8e6837255952e5c67"
 
 [[package]]
 name = "solana-frozen-abi"
-version = "1.18.26"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03ab2c30c15311b511c0d1151e4ab6bc9a3e080a37e7c6e7c2d96f5784cf9434"
+version = "1.17.28"
+source = "git+https://github.com/openlab-openos/openos#29f65361a99e24c1a98505e55ccd2a8b79e50e2d"
 dependencies = [
+ "ahash 0.8.11",
+ "blake3",
  "block-buffer 0.10.4",
  "bs58 0.4.0",
  "bv",
+ "byteorder",
+ "cc",
  "either",
  "generic-array",
  "im",
@@ -1834,6 +1815,7 @@ dependencies = [
  "serde",
  "serde_bytes",
  "serde_derive",
+ "serde_json",
  "sha2 0.10.8",
  "solana-frozen-abi-macro",
  "subtle",
@@ -1842,9 +1824,8 @@ dependencies = [
 
 [[package]]
 name = "solana-frozen-abi-macro"
-version = "1.18.26"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c142f779c3633ac83c84d04ff06c70e1f558c876f13358bed77ba629c7417932"
+version = "1.17.28"
+source = "git+https://github.com/openlab-openos/openos#29f65361a99e24c1a98505e55ccd2a8b79e50e2d"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1854,9 +1835,8 @@ dependencies = [
 
 [[package]]
 name = "solana-logger"
-version = "1.18.26"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "121d36ffb3c6b958763312cbc697fbccba46ee837d3a0aa4fc0e90fcb3b884f3"
+version = "1.17.28"
+source = "git+https://github.com/openlab-openos/openos#29f65361a99e24c1a98505e55ccd2a8b79e50e2d"
 dependencies = [
  "env_logger",
  "lazy_static",
@@ -1865,9 +1845,8 @@ dependencies = [
 
 [[package]]
 name = "solana-program"
-version = "1.18.26"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c10f4588cefd716b24a1a40dd32c278e43a560ab8ce4de6b5805c9d113afdfa1"
+version = "1.17.28"
+source = "git+https://github.com/openlab-openos/openos#29f65361a99e24c1a98505e55ccd2a8b79e50e2d"
 dependencies = [
  "ark-bn254",
  "ark-ec",
@@ -1879,7 +1858,6 @@ dependencies = [
  "blake3",
  "borsh 0.10.4",
  "borsh 0.9.3",
- "borsh 1.5.3",
  "bs58 0.4.0",
  "bv",
  "bytemuck",
@@ -1897,7 +1875,7 @@ dependencies = [
  "log",
  "memoffset",
  "num-bigint",
- "num-derive",
+ "num-derive 0.3.3",
  "num-traits",
  "parking_lot",
  "rand 0.8.5",
@@ -1920,15 +1898,14 @@ dependencies = [
 
 [[package]]
 name = "solana-sdk"
-version = "1.18.26"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "580ad66c2f7a4c3cb3244fe21440546bd500f5ecb955ad9826e92a78dded8009"
+version = "1.17.28"
+source = "git+https://github.com/openlab-openos/openos#29f65361a99e24c1a98505e55ccd2a8b79e50e2d"
 dependencies = [
  "assert_matches",
  "base64 0.21.7",
  "bincode",
  "bitflags",
- "borsh 1.5.3",
+ "borsh 0.10.4",
  "bs58 0.4.0",
  "bytemuck",
  "byteorder",
@@ -1945,7 +1922,7 @@ dependencies = [
  "libsecp256k1",
  "log",
  "memmap2",
- "num-derive",
+ "num-derive 0.3.3",
  "num-traits",
  "num_enum",
  "pbkdf2 0.11.0",
@@ -1962,7 +1939,6 @@ dependencies = [
  "serde_with",
  "sha2 0.10.8",
  "sha3 0.10.8",
- "siphasher",
  "solana-frozen-abi",
  "solana-frozen-abi-macro",
  "solana-logger",
@@ -1975,9 +1951,8 @@ dependencies = [
 
 [[package]]
 name = "solana-sdk-macro"
-version = "1.18.26"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b75d0f193a27719257af19144fdaebec0415d1c9e9226ae4bd29b791be5e9bd"
+version = "1.17.28"
+source = "git+https://github.com/openlab-openos/openos#29f65361a99e24c1a98505e55ccd2a8b79e50e2d"
 dependencies = [
  "bs58 0.4.0",
  "proc-macro2",
@@ -1994,9 +1969,8 @@ checksum = "468aa43b7edb1f9b7b7b686d5c3aeb6630dc1708e86e31343499dd5c4d775183"
 
 [[package]]
 name = "solana-zk-token-sdk"
-version = "1.18.26"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7cbdf4249b6dfcbba7d84e2b53313698043f60f8e22ce48286e6fbe8a17c8d16"
+version = "1.17.28"
+source = "git+https://github.com/openlab-openos/openos#29f65361a99e24c1a98505e55ccd2a8b79e50e2d"
 dependencies = [
  "aes-gcm-siv",
  "base64 0.21.7",
@@ -2008,7 +1982,7 @@ dependencies = [
  "itertools",
  "lazy_static",
  "merlin",
- "num-derive",
+ "num-derive 0.3.3",
  "num-traits",
  "rand 0.7.3",
  "serde",
@@ -2024,11 +1998,11 @@ dependencies = [
 [[package]]
 name = "spl-associated-token-account"
 version = "2.3.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "assert_matches",
  "borsh 0.10.4",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-program",
  "spl-token",
@@ -2039,7 +2013,7 @@ dependencies = [
 [[package]]
 name = "spl-discriminator"
 version = "0.1.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "bytemuck",
  "solana-program",
@@ -2049,7 +2023,7 @@ dependencies = [
 [[package]]
 name = "spl-discriminator-derive"
 version = "0.1.1"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "quote",
  "spl-discriminator-syn",
@@ -2059,7 +2033,7 @@ dependencies = [
 [[package]]
 name = "spl-discriminator-syn"
 version = "0.1.1"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2071,7 +2045,7 @@ dependencies = [
 [[package]]
 name = "spl-memo"
 version = "4.0.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "solana-program",
 ]
@@ -2079,7 +2053,7 @@ dependencies = [
 [[package]]
 name = "spl-pod"
 version = "0.1.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "borsh 0.10.4",
  "bytemuck",
@@ -2091,9 +2065,9 @@ dependencies = [
 [[package]]
 name = "spl-program-error"
 version = "0.3.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "solana-program",
  "spl-program-error-derive",
@@ -2103,7 +2077,7 @@ dependencies = [
 [[package]]
 name = "spl-program-error-derive"
 version = "0.3.1"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2114,7 +2088,7 @@ dependencies = [
 [[package]]
 name = "spl-tlv-account-resolution"
 version = "0.5.1"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "bytemuck",
  "solana-program",
@@ -2127,11 +2101,11 @@ dependencies = [
 [[package]]
 name = "spl-token"
 version = "4.0.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "arrayref",
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "num_enum",
  "solana-program",
@@ -2141,11 +2115,11 @@ dependencies = [
 [[package]]
 name = "spl-token-2022"
 version = "2.0.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "arrayref",
  "bytemuck",
- "num-derive",
+ "num-derive 0.4.2",
  "num-traits",
  "num_enum",
  "solana-program",
@@ -2164,7 +2138,7 @@ dependencies = [
 [[package]]
 name = "spl-token-group-interface"
 version = "0.1.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "bytemuck",
  "solana-program",
@@ -2176,7 +2150,7 @@ dependencies = [
 [[package]]
 name = "spl-token-metadata-interface"
 version = "0.2.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "borsh 0.10.4",
  "solana-program",
@@ -2189,7 +2163,7 @@ dependencies = [
 [[package]]
 name = "spl-transfer-hook-interface"
 version = "0.5.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "arrayref",
  "bytemuck",
@@ -2204,7 +2178,7 @@ dependencies = [
 [[package]]
 name = "spl-type-length-value"
 version = "0.3.0"
-source = "git+https://github.com/openlab-openos/open-token.git#a0c9ab6685a605b0e01ff67d2351918979ee2c23"
+source = "git+https://github.com/openlab-openos/open-token.git#a48204b16d91a1eddddf7a4316a3186cd4d42b03"
 dependencies = [
  "bytemuck",
  "solana-program",
@@ -2328,7 +2302,7 @@ dependencies = [
  "serde",
  "serde_spanned",
  "toml_datetime",
- "toml_edit",
+ "toml_edit 0.22.22",
 ]
 
 [[package]]
@@ -2342,6 +2316,17 @@ dependencies = [
 
 [[package]]
 name = "toml_edit"
+version = "0.19.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1b5bb770da30e5cbfde35a2d7b9b8a2c4b8ef89548a7a6aeab5c9a576e3e7421"
+dependencies = [
+ "indexmap",
+ "toml_datetime",
+ "winnow 0.5.40",
+]
+
+[[package]]
+name = "toml_edit"
 version = "0.22.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ae48d6208a266e853d946088ed816055e556cc6028c5e8e2b84d9fa5dd7c7f5"
@@ -2350,7 +2335,7 @@ dependencies = [
  "serde",
  "serde_spanned",
  "toml_datetime",
- "winnow",
+ "winnow 0.6.20",
 ]
 
 [[package]]
@@ -2585,6 +2570,15 @@ name = "windows_x86_64_msvc"
 version = "0.52.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
+
+[[package]]
+name = "winnow"
+version = "0.5.40"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f593a95398737aeed53e489c785df13f3618e41dbcd6718c6addbf1395aa6876"
+dependencies = [
+ "memchr",
+]
 
 [[package]]
 name = "winnow"
