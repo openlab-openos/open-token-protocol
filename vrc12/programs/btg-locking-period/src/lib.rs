@@ -29,6 +29,10 @@ pub mod btg_locking_period {
             serial_number > 1000,
             ErrorCode::SerialNumberTooSmall
         );
+        require!(
+            amount >= 1000000000,
+            ErrorCode::AmountTooSmall
+        );
 
         ctx.accounts.lock_account.amount = amount;
         ctx.accounts.lock_account.start_time = clock.unix_timestamp;
@@ -140,7 +144,8 @@ pub enum ErrorCode {
     #[msg("Unlock time is larger than 10 years")]
     UnlockTimeTooLate,
     #[msg("SerialNumber is larger than 1000")]
-    SerialNumberTooSmall
-    
+    SerialNumberTooSmall,
+    #[msg("Amount is larger than 1 BTG")]
+    AmountTooSmall
     
 }

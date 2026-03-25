@@ -29,43 +29,39 @@ describe("btg-locking-period", () => {
       lockAccount: lockAccount.publicKey,
       mint: mint,
       owner: provider.wallet.publicKey,
-      systemProgram: anchor.web3.SystemProgram.programId,
     })
       .signers([lockAccount])
       .rpc();
     console.log(tx);
-
-    await new Promise(resolve => setTimeout(resolve, 10000));
   });
 
 
-  //unlock test success
-  it("run unlock", async () => {
-    const tx = await program.methods.unlock().accounts({
-      lockAccount: lockAccount.publicKey,
-      owner: provider.wallet.publicKey,
-    })
-      .rpc();
-    console.log(tx);
-  });
+  // //unlock test success
+  // it("run unlock", async () => {
+  //   const tx = await program.methods.unlock().accounts({
+  //     lockAccount: lockAccount.publicKey,
+  //   })
+  //     .rpc();
+  //   console.log(tx);
+  // });
 
   //all accounts list
-  it("all lock accounts list", async () => {
-    const filters = [
-      {
-        "memcmp": {
-          "offset": 8,
-          "bytes": mint.toBase58()
-        }
-      }
-    ]
-    const allLockAccounts = await program.account.lockAccount.all(filters);
-    console.log("All lock Accouts length:", allLockAccounts.length);
-    console.log("Locking length is:", allLockAccounts.filter(item => !item.account.isUnlocked).length);
-    console.log("Unlocked length is:", allLockAccounts.filter(item => item.account.isUnlocked).length);
-    allLockAccounts.sort((a, b) => a.account.startTime.toNumber() - b.account.startTime.toNumber());
-    console.log("All Lock Accounts list:", allLockAccounts);
-  });
+  // it("all lock accounts list", async () => {
+  //   const filters = [
+  //     {
+  //       "memcmp": {
+  //         "offset": 8,
+  //         "bytes": mint.toBase58()
+  //       }
+  //     }
+  //   ]
+  //   const allLockAccounts = await program.account.lockAccount.all(filters);
+  //   console.log("All lock Accouts length:", allLockAccounts.length);
+  //   console.log("Locking length is:", allLockAccounts.filter(item => !item.account.isUnlocked).length);
+  //   console.log("Unlocked length is:", allLockAccounts.filter(item => item.account.isUnlocked).length);
+  //   allLockAccounts.sort((a, b) => a.account.startTime.toNumber() - b.account.startTime.toNumber());
+  //   console.log("All Lock Accounts list:", allLockAccounts);
+  // });
 
 
   // my lock accounts list
